@@ -1,10 +1,5 @@
-import {existsSync} from 'fs'
-import {shell} from 'electron'
-import * as remote from '@electron/remote'
 import {h, Component} from 'preact'
 import classNames from 'classnames'
-import {join} from 'path'
-import rimraf from 'rimraf'
 import {v4 as uuid} from 'uuid'
 import natsort from 'natsort'
 
@@ -17,9 +12,9 @@ import {
   isWritableDirectory
 } from '../../modules/helper.js'
 import * as gtplogger from '../../modules/gtplogger.js'
+import setting from '../../setting.js'
 import Drawer from './Drawer.js'
 
-const setting = remote.require('./setting')
 const t = i18n.context('PreferencesDrawer')
 
 class PreferencesItem extends Component {
@@ -38,7 +33,7 @@ class PreferencesItem extends Component {
       onChange(Object.assign({checked}, this.props))
     }
 
-    setting.events.on(sabaki.window.id, 'change', ({key, value}) => {
+    setting.events.on('change', ({key, value}) => {
       if (key === this.props.id) {
         this.setState({checked: value})
       }
@@ -100,7 +95,7 @@ class GeneralTab extends Component {
       setting.set('board.variation_replay_mode', evt.currentTarget.value)
     }
 
-    setting.events.on(sabaki.window.id, 'change', ({key, value}) => {
+    setting.events.on('change', ({key, value}) => {
       if (key === 'app.lang') {
         this.setState({appLang: value})
       } else if (key === 'board.variation_replay_mode') {
@@ -339,7 +334,7 @@ class PathInputItem extends Component {
       this.handlePathChange({currentTarget: {value: result[0]}})
     }
 
-    setting.events.on(sabaki.window.id, 'change', ({key, value}) => {
+    setting.events.on('change', ({key, value}) => {
       if (key === this.props.id) {
         this.setState({value: value})
       }
@@ -462,7 +457,7 @@ class ThemesTab extends Component {
       }
     }
 
-    setting.events.on(sabaki.window.id, 'change', ({key, value}) => {
+    setting.events.on('change', ({key, value}) => {
       if (key === 'theme.current') {
         this.setState({currentTheme: value})
       }
