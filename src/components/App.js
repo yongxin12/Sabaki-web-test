@@ -1,13 +1,9 @@
-import {ipcRenderer} from 'electron'
-import * as remote from '@electron/remote'
 import {h, render, Component} from 'preact'
 import classNames from 'classnames'
-import fixPath from 'fix-path'
 
 import influence from '@sabaki/influence'
 
 import TripleSplitContainer from './helpers/TripleSplitContainer.js'
-import ThemeManager from './ThemeManager.js'
 import MainMenu from './MainMenu.js'
 import MainView from './MainView.js'
 import LeftSidebar from './LeftSidebar.js'
@@ -22,16 +18,12 @@ import sabaki from '../modules/sabaki.js'
 import * as gametree from '../modules/gametree.js'
 import * as gtplogger from '../modules/gtplogger.js'
 import * as helper from '../modules/helper.js'
+import setting from '../setting.js'
 
-const setting = remote.require('./setting')
 const t = i18n.context('App')
 
 const leftSidebarMinWidth = setting.get('view.sidebar_minwidth')
 const sidebarMinWidth = setting.get('view.leftsidebar_minwidth')
-
-fixPath()
-const portableDir = process.env.PORTABLE_EXECUTABLE_DIR
-if (portableDir) process.chdir(portableDir)
 
 class App extends Component {
   constructor(props) {
@@ -59,36 +51,28 @@ class App extends Component {
       sabaki.events.emit('ready')
     })
 
-    ipcRenderer.on('load-file', (evt, ...args) => {
-      setTimeout(
-        () => sabaki.loadFile(...args),
-        setting.get('app.loadgame_delay')
-      )
+    // Web version: Add file drag & drop support
+    window.addEventListener('dragover', evt => {
+      evt.preventDefault()
     })
 
-    sabaki.window.on('focus', () => {
-      if (setting.get('file.show_reload_warning')) {
-        sabaki.askForReload()
+    window.addEventListener('drop', evt => {
+      evt.preventDefault()
+      
+      const files = Array.from(evt.dataTransfer.files)
+      const gameFile = files.find(file => 
+        file.name.toLowerCase().endsWith('.sgf') ||
+        file.name.toLowerCase().endsWith('.ngf') ||
+        file.name.toLowerCase().endsWith('.gib') ||
+        file.name.toLowerCase().endsWith('.ugf')
+      )
+      
+      if (gameFile) {
+        sabaki.loadFile(gameFile)
       }
     })
 
-    sabaki.window.on('resize', () => {
-      clearTimeout(this.resizeId)
-
-      this.resizeId = setTimeout(() => {
-        if (
-          !sabaki.window.isMaximized() &&
-          !sabaki.window.isMinimized() &&
-          !sabaki.window.isFullScreen()
-        ) {
-          let [width, height] = sabaki.window.getContentSize()
-          setting.set('window.width', width).set('window.height', height)
-        }
-      }, 1000)
-    })
-
     // Handle mouse wheel
-
     for (let el of document.querySelectorAll(
       '#main main, #graph, #winrategraph'
     )) {
@@ -107,16 +91,6 @@ class App extends Component {
         }
       })
     }
-
-    // Handle file drag & drop
-
-    document.body.addEventListener('dragover', evt => evt.preventDefault())
-    document.body.addEventListener('drop', evt => {
-      evt.preventDefault()
-
-      if (evt.dataTransfer.files.length === 0) return
-      sabaki.loadFile(evt.dataTransfer.files[0].path)
-    })
 
     // Handle keys
 
