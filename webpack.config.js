@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const webpack = require('webpack')
 
 let noopPath = path.join(__dirname, 'src/modules/shims/noop')
 let emptyPath = path.join(__dirname, 'src/modules/shims/empty')
@@ -58,6 +59,12 @@ module.exports = (env, argv) => ({
       template: './index.html',
       filename: 'index.html'
     }),
+    new webpack.DefinePlugin({
+      'process.platform': JSON.stringify('web'),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'process.versions': JSON.stringify({}),
+      'process.browser': JSON.stringify(true)
+    }),
     new CopyWebpackPlugin({
       patterns: [
         { from: 'style', to: 'style' },
@@ -67,7 +74,8 @@ module.exports = (env, argv) => ({
         { from: 'src/manifest.json', to: 'src/manifest.json' },
         { from: 'node_modules/@primer/octicons/build/svg', to: 'node_modules/@primer/octicons/build/svg' },
         { from: 'node_modules/@sabaki/deadstones/wasm', to: 'node_modules/@sabaki/deadstones/wasm' },
-        { from: 'node_modules/@sabaki/shudan/css', to: 'node_modules/@sabaki/shudan/css' }
+        { from: 'node_modules/@sabaki/shudan/css', to: 'node_modules/@sabaki/shudan/css' },
+        { from: 'node_modules/pikaday/css', to: 'node_modules/pikaday/css' }
       ]
     })
   ],
@@ -119,7 +127,8 @@ module.exports = (env, argv) => ({
       "http": false,
       "https": false,
       "os": false,
-      "url": false
+      "url": false,
+      "process": false
     }
   },
 

@@ -1,93 +1,29 @@
 import {h, Component, toChildArray} from 'preact'
-import breaks from 'remark-breaks'
 import * as helper from '../modules/helper.js'
 
-import ReactMarkdown from 'react-markdown'
 import ContentDisplay from './ContentDisplay.js'
 
-function typographer(children) {
-  if (!Array.isArray(children)) {
-    return typographer([children])[0]
-  }
+// Simplified markdown renderer to avoid react-markdown dependency issues
+export default class MarkdownContentDisplay extends Component {
+  render() {
+    let {source = '', text = ''} = this.props
+    let content = source || text
 
-  return children.map(child => {
-    if (typeof child !== 'string') return child
-    return helper.typographer(child)
-  })
-}
-
-function htmlify(children) {
-  return toChildArray(children).map(child => {
-    if (typeof child !== 'string') return child
+    // Simple markdown-to-HTML conversion for basic support
+    let html = content
+      .replace(/\n/g, '<br>')  // Line breaks
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Bold
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')  // Italic
+      .replace(/`(.*?)`/g, '<code>$1</code>')  // Code
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="comment-external">$1</a>')  // Links
 
     return h(ContentDisplay, {
-      tag: 'span',
-      content: typographer(child)
-    })
-  })
-}
+      tag: 'div',
+      ...this.props,
 
-const generateBasicComponent = tag => ({children}) =>
-  h(tag, {}, htmlify(children))
-
-const Emphasis = generateBasicComponent('em')
-const Strong = generateBasicComponent('strong')
-const Delete = generateBasicComponent('del')
-const ListItem = generateBasicComponent('li')
-const Table = generateBasicComponent('table')
-
-function Paragraph({children}) {
-  return h('p', {}, htmlify(children))
-}
-
-function Link({href, title, children}) {
-  if (href.match(/^((ht|f)tps?:\/\/|mailto:)/) == null)
-    return h('span', {}, typographer(children))
-
-  return h(
-    ContentDisplay,
-    {},
-    h('a', {class: 'comment-external', href, title}, typographer(children))
-  )
-}
-
-function Image({src, alt}) {
-  return h(Link, {href: src}, typographer(alt))
-}
-
-function Heading({level, children}) {
-  return h(`h${level}`, {}, typographer(children))
-}
-
-function Html({isBlock, value}) {
-  return h(isBlock ? Paragraph : 'span', {}, value)
-}
-
-class MarkdownContentDisplay extends Component {
-  render({source}) {
-    return h(ReactMarkdown, {
-      children: source,
-      remarkPlugins: [breaks],
-      components: {
-        p: Paragraph,
-        em: Emphasis,
-        strong: Strong,
-        del: Delete,
-        a: Link,
-        img: Image,
-        table: Table,
-        li: ListItem,
-        h1: Heading,
-        h2: Heading,
-        h3: Heading,
-        h4: Heading,
-        h5: Heading,
-        h6: Heading,
-        code: Paragraph,
-        html: Html
-      }
+      children: h('div', {
+        dangerouslySetInnerHTML: {__html: html}
+      })
     })
   }
 }
-
-export default MarkdownContentDisplay

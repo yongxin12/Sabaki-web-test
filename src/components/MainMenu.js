@@ -1,55 +1,18 @@
 import {Component} from 'preact'
-import {ipcRenderer} from 'electron'
-import * as remote from '@electron/remote'
-import * as dialog from '../modules/dialog.js'
-import * as menu from '../menu.js'
 
+// Web-compatible MainMenu component - simplified for browser environment
 export default class MainMenu extends Component {
   constructor(props) {
     super(props)
-
-    this.menuData = menu.get()
-    this.window = remote.getCurrentWindow()
-    this.listeners = {}
-
-    this.buildMenu = () => {
-      ipcRenderer.send('build-menu', this.props)
-    }
   }
 
   componentDidMount() {
-    this.window.on('focus', this.buildMenu)
-
-    let handleMenuClicks = menu => {
-      for (let item of menu) {
-        if (item.click != null) {
-          this.listeners[item.id] = () => {
-            if (!this.props.showMenuBar) {
-              this.window.setMenuBarVisibility(false)
-            }
-
-            dialog.closeInputBox()
-            item.click()
-          }
-
-          ipcRenderer.on(`menu-click-${item.id}`, this.listeners[item.id])
-        }
-
-        if (item.submenu != null) {
-          handleMenuClicks(item.submenu)
-        }
-      }
-    }
-
-    handleMenuClicks(this.menuData)
+    // No menu handling needed in web environment
+    // Menu functionality is handled through the UI components directly
   }
 
   componentWillUnmount() {
-    this.window.removeListener('focus', this.buildMenu)
-
-    for (let id in this.listeners) {
-      ipcRenderer.removeListener(`menu-click-${item.id}`, this.listeners[id])
-    }
+    // No cleanup needed
   }
 
   shouldComponentUpdate(nextProps) {
@@ -61,6 +24,7 @@ export default class MainMenu extends Component {
   }
 
   render() {
-    this.buildMenu()
+    // In web version, menu is integrated into the UI, not a separate component
+    return null
   }
 }

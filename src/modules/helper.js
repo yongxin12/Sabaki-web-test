@@ -1,9 +1,9 @@
-import fs from 'fs'
 import {join} from 'path'
 
 let id = 0
 
-export const linebreak = process.platform === 'win32' ? '\r\n' : '\n'
+// Browser-compatible linebreak detection
+export const linebreak = (typeof process !== 'undefined' && process.platform === 'win32') ? '\r\n' : '\n'
 
 export function noop() {}
 
@@ -119,39 +119,13 @@ export function wait(ms) {
 }
 
 export function isWritableDirectory(path) {
-  if (path == null) return false
-
-  let fileStats = null
-
-  try {
-    fileStats = fs.statSync(path)
-  } catch (err) {}
-
-  if (fileStats != null) {
-    if (fileStats.isDirectory()) {
-      try {
-        fs.accessSync(path, fs.W_OK)
-        return true
-      } catch (err) {}
-    }
-
-    // Path exists, either no write permissions to directory or path is not a directory
-    return false
-  } else {
-    // Path doesn't exist
-    return false
-  }
+  // In browser environment, always return false for directory operations
+  return false
 }
 
 export function copyFolderSync(from, to) {
-  fs.mkdirSync(to)
-  fs.readdirSync(from).forEach(element => {
-    if (fs.lstatSync(join(from, element)).isFile()) {
-      fs.copyFileSync(join(from, element), join(to, element))
-    } else {
-      copyFolderSync(join(from, element), join(to, element))
-    }
-  })
+  // Not supported in browser environment
+  console.warn('copyFolderSync not supported in browser environment')
 }
 
 export function getScore(board, areaMap, {komi = 0, handicap = 0} = {}) {

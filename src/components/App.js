@@ -13,7 +13,7 @@ import InputBox from './InputBox.js'
 import BusyScreen from './BusyScreen.js'
 import InfoOverlay from './InfoOverlay.js'
 
-import i18n from '../i18n.js'
+import i18n from '../modules/shims/i18n.js'
 import sabaki from '../modules/sabaki.js'
 import * as gametree from '../modules/gametree.js'
 import * as gtplogger from '../modules/gtplogger.js'
