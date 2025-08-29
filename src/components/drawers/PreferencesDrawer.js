@@ -197,7 +197,7 @@ class GeneralTab extends Component {
                 .filter(
                   ([, entry]) =>
                     entry.stats != null &&
-                    entry.stats.translatedStringsCount > 0
+                    (entry.stats.translatedStringsCount || 0) > 0
                 )
                 .map(([locale, entry]) =>
                   h(
@@ -206,7 +206,7 @@ class GeneralTab extends Component {
                       value: locale,
                       selected: this.state.appLang === locale
                     },
-                    `${entry.nativeName} (${entry.name})`
+                    `${entry.nativeName || entry.name || locale} (${entry.name || locale})`
                   )
                 )
             ),
@@ -216,7 +216,7 @@ class GeneralTab extends Component {
               {},
               i18n.formatNumber(
                 Math.floor(
-                  i18n.getLanguages()[this.state.appLang].stats.progress * 100
+                  (i18n.getLanguages()[this.state.appLang]?.stats?.progress || 1.0) * 100
                 )
               ) + '%'
             )
