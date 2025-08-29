@@ -101,9 +101,6 @@ module.exports = (env, argv) => ({
 
       // Module-specific shims
       '../modules/enginesyncer': emptyPath,
-      '../modules/gtplogger': path.join(__dirname, 'src/modules/shims/gtplogger'),
-      './gtplogger': path.join(__dirname, 'src/modules/shims/gtplogger'),
-      './gtplogger.js': path.join(__dirname, 'src/modules/shims/gtplogger'),
       './i18n': path.join(__dirname, 'src/modules/shims/i18n'),
       '../i18n': path.join(__dirname, 'src/modules/shims/i18n'),
       '../../i18n': path.join(__dirname, 'src/modules/shims/i18n'),
