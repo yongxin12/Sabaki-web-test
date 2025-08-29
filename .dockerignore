@@ -1,0 +1,41 @@
+# Build artifacts
+dist/
+node_modules/
+*.log
+
+# Git and development files
+.git/
+.gitignore
+.github/
+.babelrc
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Test files
+test/
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+bap.sh
+deploy.sh
+
+# Documentation
+docs/
+
+# CI files
+ci/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env*
