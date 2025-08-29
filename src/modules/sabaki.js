@@ -122,7 +122,7 @@ class Sabaki extends EventEmitter {
 
     // Bind state to settings
 
-    setting.events.on(this.window.id, 'change', ({key, value}) => {
+    setting.events.on('change', ({key, value}) => {
       this.updateSettingState(key)
     })
 
