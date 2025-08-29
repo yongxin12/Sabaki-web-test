@@ -64,6 +64,7 @@ module.exports = (env, argv) => ({
         { from: 'data', to: 'data' },
         { from: 'img', to: 'img' },
         { from: 'build/icon.ico', to: 'build/icon.ico' },
+        { from: 'src/manifest.json', to: 'src/manifest.json' },
         { from: 'node_modules/@primer/octicons/build/svg', to: 'node_modules/@primer/octicons/build/svg' },
         { from: 'node_modules/@sabaki/deadstones/wasm', to: 'node_modules/@sabaki/deadstones/wasm' },
         { from: 'node_modules/@sabaki/shudan/css', to: 'node_modules/@sabaki/shudan/css' }

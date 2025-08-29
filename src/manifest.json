@@ -1,0 +1,17 @@
+{
+  "name": "Sabaki Go Board",
+  "short_name": "Sabaki",
+  "description": "An elegant Go/Baduk/Weiqi board and SGF editor for the web",
+  "icons": [
+    {
+      "src": "build/icon.ico",
+      "sizes": "48x48 96x96",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#8B4513",
+  "background_color": "#f0f0f0",
+  "categories": ["games", "education", "utilities"]
+}

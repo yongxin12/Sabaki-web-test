@@ -2,15 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Sabaki</title>
+    <title>Sabaki - Go/Baduk/Weiqi Board</title>
     <meta name="author" content="Yichuan Shen" />
+    <meta name="description" content="An elegant Go/Baduk/Weiqi board and SGF editor for the web" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="shortcut icon" href="./build/icon.ico" type="image/x-icon" />
+    <link rel="manifest" href="./src/manifest.json" />
     <link rel="stylesheet" type="text/css" href="./style/app.css" />
     <link rel="stylesheet" type="text/css" href="./style/index.css" />
     <link rel="stylesheet" type="text/css" href="./style/comments.css" />
+    
+    <!-- PWA theme -->
+    <meta name="theme-color" content="#8B4513" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Sabaki" />
   </head>
   <body>
-    <script src="./bundle.js"></script>
+    <noscript>
+      <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h2>JavaScript Required</h2>
+        <p>Sabaki requires JavaScript to run. Please enable JavaScript in your browser.</p>
+      </div>
+    </noscript>
   </body>
 </html>
