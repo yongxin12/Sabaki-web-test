@@ -1,99 +1,95 @@
-const nativeRequire = eval('require')
+// Web-compatible i18n module
+import {load as dolmLoad, getKey as dolmGetKey} from 'dolm'
+import * as setting from './setting.js'
 
-const {ipcMain} = require('electron')
-var remote = null
+// Fallback language data
+let languages = {
+  en: { 
+    filename: 'en.i18n.js',
+    name: 'English'
+  }
+}
+
+// Try to load @sabaki/i18n asynchronously
 try {
-  remote = require('@electron/remote')
-} catch (e) {}
-const {readFileSync} = require('fs')
-const path = require('path')
-const {load: dolmLoad, getKey: dolmGetKey} = require('dolm')
-const languages = require('@sabaki/i18n')
+  import('@sabaki/i18n').then(module => {
+    if (module && module.default) {
+      languages = module.default
+    } else if (module) {
+      languages = module
+    }
+  }).catch(() => {
+    // Use fallback languages if import fails
+  })
+} catch (e) {
+  // Use fallback languages
+}
 
-const isElectron = process.versions.electron != null
-const isRenderer = isElectron && remote != null
+let appLang = setting ? setting.get('app.lang') : 'en'
 
-const mainI18n = isRenderer ? remote.require('./i18n') : null
-const setting = isRenderer
-  ? remote.require('./setting')
-  : isElectron
-  ? nativeRequire('./setting')
-  : null
-
-function getKey(input, params = {}) {
+export const getKey = (input, params = {}) => {
   let key = dolmGetKey(input, params)
   return key.replace(/&(?=\w)/g, '')
 }
 
 const dolm = dolmLoad({}, getKey)
 
-let appLang = setting == null ? undefined : setting.get('app.lang')
+export const t = dolm.t
+export const context = dolm.context
 
-exports.getKey = getKey
-exports.t = dolm.t
-exports.context = dolm.context
-
-exports.formatNumber = function(num) {
+export const formatNumber = function(num) {
   return new Intl.NumberFormat(appLang).format(num)
 }
 
-exports.formatMonth = function(month) {
+export const formatMonth = function(month) {
   let date = new Date()
   date.setMonth(month)
   return date.toLocaleString(appLang, {month: 'long'})
 }
 
-exports.formatWeekday = function(weekday) {
+export const formatWeekday = function(weekday) {
   let date = new Date(2020, 2, 1 + (weekday % 7))
   return date.toLocaleString(appLang, {weekday: 'long'})
 }
 
-exports.formatWeekdayShort = function(weekday) {
+export const formatWeekdayShort = function(weekday) {
   let date = new Date(2020, 2, 1 + (weekday % 7))
   return date.toLocaleString(appLang, {weekday: 'short'})
 }
 
 function loadStrings(strings) {
   dolm.load(strings)
-
-  if (isElectron && !isRenderer) {
-    ipcMain.emit('build-menu')
-  }
 }
 
-exports.loadFile = function(filename) {
-  if (isRenderer) {
-    mainI18n.loadFile(filename)
-  }
-
-  try {
-    loadStrings(
-      Function(`
-        "use strict"
-
-        let exports = {}
-        let module = {exports}
-
-        ;(() => (${readFileSync(filename, 'utf8')}))()
-
-        return module.exports
-      `)()
-    )
-  } catch (err) {
-    loadStrings({})
-  }
+export const loadFile = function(filename) {
+  // In browser environment, we can't read files directly
+  // Load empty strings for now
+  loadStrings({})
 }
 
-exports.loadLang = function(lang) {
+export const loadLang = function(lang) {
   appLang = lang
-
-  exports.loadFile(languages[lang].filename)
+  loadFile(languages[lang] ? languages[lang].filename : 'en.i18n.js')
 }
 
-exports.getLanguages = function() {
+export const getLanguages = function() {
   return languages
 }
 
 if (appLang != null) {
-  exports.loadLang(appLang)
+  loadLang(appLang)
+}
+
+// Default export for compatibility with existing imports
+export default {
+  getKey,
+  t,
+  context,
+  formatNumber,
+  formatMonth,
+  formatWeekday,
+  formatWeekdayShort,
+  loadFile,
+  loadLang,
+  getLanguages
 }
