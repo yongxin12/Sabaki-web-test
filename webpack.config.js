@@ -108,6 +108,7 @@ module.exports = (env, argv) => ({
 
       // Component shims for features not available in web
       './ThemeManager': path.join(__dirname, 'src/modules/shims/ThemeManager'),
+      './ThemeManager.js': path.join(__dirname, 'src/modules/shims/ThemeManager'),
       './GtpConsole': noopPath,
       './TextSpinner': noopPath,
       '../TextSpinner': noopPath,
