@@ -107,7 +107,7 @@ module.exports = (env, argv) => ({
       '../menu': emptyPath,
 
       // Component shims for features not available in web
-      './ThemeManager': noopPath,
+      './ThemeManager': path.join(__dirname, 'src/modules/shims/ThemeManager'),
       './GtpConsole': noopPath,
       './TextSpinner': noopPath,
       '../TextSpinner': noopPath,
