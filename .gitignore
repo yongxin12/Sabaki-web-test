@@ -9,3 +9,11 @@ bundle.js.map
 
 *.pdn
 *.vbs
+# Docker and deployment files (contain sensitive info)
+entrypoint.sh
+ssl-setup.sh
+nginx.conf
+docker-compose.cloud.yml
+deploy.sh
+deploy-fixed.sh
+Dockerfile
